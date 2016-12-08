@@ -1,8 +1,8 @@
 Package.describe({
   summary: "A package that provides a blog at /blog",
   version: "0.8.6",
-  name: "ryw:blog",
-  git: "https://github.com/meteor-blog/meteor-blog.git"
+  name: "zaotech:meteor-blog",
+  git: "https://github.com/Zaotech/meteor-blog.git"
 });
 
 Package.onUse(function(api) {
@@ -126,7 +126,7 @@ Package.onUse(function(api) {
 
 Package.onTest(function (api) {
   api.use('kadira:flow-router');
-  api.use('ryw:blog');
+  api.use('zaotech:meteor-blog');
   api.use('tinytest');
   api.use('coffeescript');
 
