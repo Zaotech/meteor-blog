@@ -18,8 +18,10 @@
               <form>
                 <div class="row form-group">
                   <div class="col-md-9">
-                    <label>{{BlogLanguage.title}}</label>
-                    <input tabindex="1" type="text" class="form-control" name="title" placeholder="{{BlogLanguage.title}}" value="{{title}}">
+                    {{#each lang in supportedLanguages}}
+                      <label>{{BlogLanguage.title}} - {{lang.name}}</label>
+                      <input tabindex="1" type="text" class="form-control" name="title" placeholder="{{BlogLanguage.title}}" value="{{getTranslatedStringForLanguage title lang.code}}" data-lang="{{lang.code}}">
+                    {{/each}}
                   </div>
                   <div class="col-md-3">
                   <label for="featured-image">{{BlogLanguage.featuredImage}}</label>

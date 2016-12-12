@@ -82,7 +82,7 @@ save = (tpl, cb) ->
   slug = $('[name=slug]', $form).val()
 
   attrs =
-    title: $('[name=title]', $form).val()
+    title: convertNodesToStringObject($('[name=title]', $form))
     tags: getBlogTags($('[name=tags]', $form).val().split(','))
     slug: slug
     description: $('[name=description]', $form).val()

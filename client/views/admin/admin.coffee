@@ -25,7 +25,7 @@ Template.blogAdmin.helpers
     if _.size Session.get 'filters'
       results = _(results).where Session.get('filters')
 
-    results
+    translateBlogPosts(results)
 
   table: ->
     rowsPerPage: 20

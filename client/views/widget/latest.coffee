@@ -7,7 +7,7 @@ Template.blogLatest.onRendered () ->
 Template.blogLatest.helpers
   latest: ->
     num = if @num then @num else 3
-    Blog.Post.all limit: num
+    translateBlogPosts(Blog.Post.all limit: num)
 
   date: (date) ->
     if date

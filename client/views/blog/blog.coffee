@@ -37,9 +37,11 @@ Template.blogIndex.helpers
   posts: ->
     tag = Template.instance().tag.get()
     if tag
-      Blog.Post.where({ tags: tag }, { sort: publishedAt: -1 })
+      posts = Blog.Post.where({ tags: tag }, { sort: publishedAt: -1 })
     else
-      Blog.Post.where({}, { sort: publishedAt: -1 })
+      posts = Blog.Post.where({}, { sort: publishedAt: -1 })
+
+    translateBlogPosts(post)
 
 # Provide data to custom templates, if any
 Meteor.startup ->
@@ -71,7 +73,8 @@ Template.blogShow.onCreated ->
 
 Template.blogShow.helpers
   blogReady: -> Template.instance().blogReady.get()
-  post: -> Blog.Post.first slug: Template.instance().slug.get()
+  post: ->
+    translateBlogPost(Blog.Post.first slug: Template.instance().slug.get())
   notFound: ->
     if Blog.settings.blogNotFoundTemplate
       Blog.settings.blogNotFoundTemplate

@@ -24,7 +24,8 @@ Package.onUse(function(api) {
     'meteorhacks:subs-manager@1.6.2',
     'cfs:standard-packages@0.5.9',
     'cfs:gridfs@0.0.33',
-    'cfs:s3@0.1.3'
+    'cfs:s3@0.1.3',
+    'tap:i18n'
   ], both);
 
   // FILES FOR SERVER AND CLIENT

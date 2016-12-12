@@ -62,3 +62,57 @@ Template.registerHelper "blogPager", ->
 
 Template.registerHelper 'blogPathFor', (name, options) ->
   return Blog.Router.pathFor name, @, options
+
+Template.registerHelper "getTranslatedString", (stringObject) ->
+  string = getTranslatedString(stringObject)
+
+Template.registerHelper "getTranslatedStringForLanguage", (stringObject, langCode) ->
+  string = getTranslatedString(stringObject, langCode)
+
+Template.registerHelper "supportedLanguages", () ->
+  languages = TAPi18n.getLanguages()
+  supportedLanguages = []
+  for langCode, lang of languages
+    supportedLanguages.push { code: langCode, name: lang.name }
+
+  supportedLanguages
+
+################################################################################
+# Global Functions
+#
+
+# Convert an array of HTML input nodes to the object of strings to be inserted into the database.
+@convertNodesToStringObject = (nodes) ->
+  stringObj = {}
+
+  for node in nodes
+    lang = $(node).data("lang")
+    stringObj[lang] = $(node).val()
+
+  stringObj
+
+# Get the correct string translation from an object with all the translations.
+# - Default to English if not requesting specific translation and the translation is not available.
+@getTranslatedString = (stringObject, langCode) ->
+  if langCode?
+    string = stringObject[langCode]
+  else
+    string = stringObject[TAPi18n.getLanguage()] or stringObject["en"]
+
+# Return the blog post but replace the translation string objects with the correct translated string for use by templates.
+# Blog post properties that support translations:
+# - Title
+# - Body (soon)
+@translateBlogPost = (post) ->
+  post.title = getTranslatedString(post.title)
+
+  post
+
+# Same as translateBlogPost but for an array of posts.
+@translateBlogPosts = (posts) ->
+  translatedPosts = []
+
+  for post in posts
+    translatedPosts.push translateBlogPost(post)
+
+  translatedPosts
