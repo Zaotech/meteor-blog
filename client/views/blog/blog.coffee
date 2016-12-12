@@ -41,7 +41,7 @@ Template.blogIndex.helpers
     else
       posts = Blog.Post.where({}, { sort: publishedAt: -1 })
 
-    translateBlogPosts(post)
+    translateBlogPosts(posts)
 
 # Provide data to custom templates, if any
 Meteor.startup ->
