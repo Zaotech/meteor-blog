@@ -61,14 +61,16 @@
                 </div>
                 <div class="row form-group">
                   <div class="col-md-12">
-                    <label>{{BlogLanguage.body}}</label>
                     <div class="edit-mode">
                       <a href="#" data-action="toggle-visual" class="selected">{{BlogLanguage.showAsVisual}}</a>
                       -
                       <a href="#" data-action="toggle-html">{{BlogLanguage.showAsHtml}}</a>
                     </div>
-                    <textarea hidden class="html-editor col-xs-12"></textarea>
-                    <div class="editable" tabindex="3"></div>
+                    {{#each lang in supportedLanguages}}
+                      <label class="body-label">{{BlogLanguage.body}} - {{lang.name}}</label>
+                      <textarea hidden class="html-editor col-xs-12" data-lang="{{lang.code}}"></textarea>
+                      <div class="editable" tabindex="3" data-lang="{{lang.code}}"></div>
+                    {{/each}}
                     <button type="submit" class="btn btn-default">
                       <i class="fa fa-save"></i> {{BlogLanguage.save}}
                     </button>

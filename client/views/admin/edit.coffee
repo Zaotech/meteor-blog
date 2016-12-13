@@ -53,30 +53,42 @@ setEditMode = (tpl, mode) ->
 # Save
 save = (tpl, cb) ->
   $form = tpl.$('form')
-  $editable = $('.editable', $form)
-  editor = BlogEditor.make tpl
+  editables = $('.editable', $form)
+  editors = BlogEditor.make tpl
+  bodyStringObject = {}
 
-  # Make paragraphs commentable
-  # remove duplicates
-  $editable.find('p[data-section-id]').each ->
-    sec_id = $(this).attr 'data-section-id'
-    if $editable.find("p[data-section-id=#{sec_id}]").length > 1
-      $editable.find("p[data-section-id=#{sec_id}]:gt(0)").removeAttr 'data-section-id'
-  # decorate
-  i = $editable.find('p[data-section-id]').length + 1
-  $editable.find('p:not([data-section-id])').each ->
-    $(this).addClass('commentable-section').attr('data-section-id', i)
-    i++
+  for index in [0..editables.length-1]
+    $editable = $(editables[index])
+    editor = editors[index]
 
-  # Highlight code blocks
-  editor.highlightSyntax()
+    # Make paragraphs commentable
+    # remove duplicates
+    $editable.find('p[data-section-id]').each ->
+      sec_id = $(this).attr 'data-section-id'
+      if $editable.find("p[data-section-id=#{sec_id}]").length > 1
+        $editable.find("p[data-section-id=#{sec_id}]:gt(0)").removeAttr 'data-section-id'
+    # decorate
+    i = $editable.find('p[data-section-id]').length + 1
+    $editable.find('p:not([data-section-id])').each ->
+      $(this).addClass('commentable-section').attr('data-section-id', i)
+      i++
 
-  if $editable.is(':visible')
-    body = editor.contents()
-  else
-    body = $('.html-editor', $form).val().trim()
+    # Highlight code blocks
+    editor.highlightSyntax()
 
-  if not body
+    if $editable.is(':visible')
+      body = editor.contents()
+    else
+      body = $('.html-editor', $form).val().trim()
+
+    if body?
+      langCode = $editable.data('lang')
+      bodyStringObject[langCode] = body
+
+      bodyNotNull = true # At least one body exists
+
+  # If not at least one body exists, call the callback with an error.
+  if not bodyNotNull
     return cb(null, new Error Blog.settings.language.editErrorBodyRequired)
 
   slug = $('[name=slug]', $form).val()
@@ -86,7 +98,7 @@ save = (tpl, cb) ->
     tags: getBlogTags($('[name=tags]', $form).val().split(','))
     slug: slug
     description: $('[name=description]', $form).val()
-    body: body
+    body: bodyStringObject
     updatedAt: new Date()
     titleBackground: $('[name=background-title]', $form).is(':checked')
 
@@ -159,9 +171,10 @@ Template.blogAdminEdit.onRendered ->
         # Wait a tick for template to re-render
         post = Blog.Post.first(@id.get())
         if post?
-          # Load post body initially, if any
-          @$('.editable').html post.body
-          @$('.html-editor').html post.body
+          for language in getSupportedLanguages()
+            # Load post body initially, if any
+            @$('.editable[data-lang=' + language.code + ']').html post.body[language.code]
+            @$('.html-editor[data-lang=' + language.code + ']').html post.body[language.code]
 
         # Tags
         $tags = @$('[data-role=tagsinput]')
@@ -202,26 +215,37 @@ Template.blogAdminEdit.events
     if tpl.$('.editable').is(':visible')
       return
 
-    BlogEditor.make(tpl).highlightSyntax()
+    for editor in BlogEditor.make(tpl)
+      editor.highlightSyntax()
     setEditMode tpl, 'visual'
 
   'click [data-action=toggle-html]': (e, tpl) ->
-    $editable = tpl.$('.editable')
-    $html = tpl.$('.html-editor')
-    if $html.is(':visible')
+    editables = tpl.$('.editable')
+    htmls = tpl.$('.html-editor')
+    if htmls.is(':visible')
       return
 
-    $html.val BlogEditor.make(tpl).pretty()
+    editors = BlogEditor.make(tpl)
+    for index in [0..editables.length-1]
+      $editable = $(editables[index])
+      $html = $(htmls[index])
+
+      $html.val editors[index].pretty()
+      $html.height($editable.height())
+
     setEditMode tpl, 'html'
-    $html.height($editable.height())
 
   # Copy HTML content to visual editor and autosize height
   'keyup .html-editor': (e, tpl) ->
-    $editable = tpl.$('.editable')
-    $html = tpl.$('.html-editor')
+    editables = tpl.$('.editable')
+    htmls = tpl.$('.html-editor')
 
-    $editable.html($html.val()?.trim())
-    $html.height($editable.height())
+    for index in [0..editables.length-1]
+      $editable = $(editables[index])
+      $html = $(htmls[index])
+
+      $editable.html($html.val()?.trim())
+      $html.height($editable.height())
 
   # Autosave
   'input .editable, keydown .editable, keydown .html-editor': _.debounce (e, tpl) ->

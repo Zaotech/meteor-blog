@@ -107,19 +107,25 @@ class Blog.Post extends Minimongoid
       while match = regex.exec @body
         return match[1]
 
-  @excerpt: (html) ->
-    if Blog.settings.excerptFunction?
-      Blog.settings.excerptFunction html
-    else
-      # Find 1st non-empty paragraph
-      matches = html?.split /<\/div>|<\/p>|<\/blockquote>|<br><br>|\\n\\n|\\r\\n\\r\\n/m
+  @excerpt: (body) ->
+    excerptObject = {}
+    
+    for langCode, html of body
+      if Blog.settings.excerptFunction?
+        excerptObject[langCode] = Blog.settings.excerptFunction html
+      else
+        # Find 1st non-empty paragraph
+        matches = html?.split /<\/div>|<\/p>|<\/blockquote>|<br><br>|\\n\\n|\\r\\n\\r\\n/m
 
-      i = 0
-      ret = ''
-      while not ret and matches?[i]
-        # Strip tags and clean up whitespaces
-        ret += matches[i++].replace(/(<([^>]+)>)/ig, ' ').replace(/(\s\.)/, '.').replace('&nbsp;', ' ').trim()
-      ret
+        i = 0
+        ret = ''
+        while not ret and matches?[i]
+          # Strip tags and clean up whitespaces
+          ret += matches[i++].replace(/(<([^>]+)>)/ig, ' ').replace(/(\s\.)/, '.').replace('&nbsp;', ' ').trim()
+        
+        excerptObject[langCode] = ret
+
+    excerptObject
 
   author: ->
     Blog.Author.first @userId

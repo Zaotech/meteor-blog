@@ -111,3 +111,13 @@ if Meteor.isClient
 Blog.config
   basePath: '/blog'
   adminBasePath: '/admin/blog'
+
+
+# Return an array with the code and full name of the supported languages.
+@getSupportedLanguages = () ->
+  languages = TAPi18n.getLanguages()
+  supportedLanguages = []
+  for langCode, lang of languages
+    supportedLanguages.push { code: langCode, name: lang.name }
+
+  supportedLanguages

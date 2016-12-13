@@ -17,7 +17,13 @@ Meteor.startup ->
     i = 0
     while i < arr.length
       obj = arr[i++]
-      obj.update({ excerpt: Blog.Post.excerpt(obj.body) })
+      excerpts = {}
+      for language in getSupportedLanguages()
+        body = obj.body[language.code]
+        excerpt = Blog.Post.excerpt(body)
+        excerpts[language.code] = excerpt
+      
+      obj.update({ excerpt: excerpts })
 
   # Set version flag
   if not Blog.Config.first()
@@ -25,6 +31,7 @@ Meteor.startup ->
   else
     Blog.Config.first().push versions: '0.5.0'
 
+  ###
   # Add side comments
   arr = Blog.Post.all()
   i = 0
@@ -45,6 +52,7 @@ Meteor.startup ->
         return newEle
       )
       obj.update body: html
+  ###
 
   # Ensure tags collection is non-empty
   if Blog.Tag.count() == 0

@@ -70,12 +70,7 @@ Template.registerHelper "getTranslatedStringForLanguage", (stringObject, langCod
   string = getTranslatedString(stringObject, langCode)
 
 Template.registerHelper "supportedLanguages", () ->
-  languages = TAPi18n.getLanguages()
-  supportedLanguages = []
-  for langCode, lang of languages
-    supportedLanguages.push { code: langCode, name: lang.name }
-
-  supportedLanguages
+  getSupportedLanguages()
 
 ################################################################################
 # Global Functions
@@ -101,9 +96,14 @@ Template.registerHelper "supportedLanguages", () ->
 
 # Return the blog post but replace the translation string objects with the correct translated string for use by templates.
 # Blog post properties that support translations:
+# - Body
+# - Excerpt
 # - Title
-# - Body (soon)
 @translateBlogPost = (post) ->
+  if post.body? # Body isn't always present
+    post.body = getTranslatedString(post.body)
+
+  post.excerpt = getTranslatedString(post.excerpt)
   post.title = getTranslatedString(post.title)
 
   post

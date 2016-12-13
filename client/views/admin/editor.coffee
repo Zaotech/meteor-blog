@@ -2,69 +2,75 @@ class @BlogEditor extends MediumEditor
 
   # FACTORY
   @make: (tpl) ->
-    $editable = $ '.editable'
+    editables = $ '.editable'
+    editors = []
 
-    if $editable.data('mediumEditor')
-      return $editable.data('mediumEditor')
+    for editable in editables
+      $editable = $(editable)
+      if $editable.data('mediumEditor')
+        editors.push $editable.data('mediumEditor')
+        continue
 
-    # Set up the medium editor with image upload
-    editor = new BlogEditor $editable[0],
-      buttonLabels: 'fontawesome'
-      extensions:
-        placeholder:
-          text: ''
-      toolbar:
-        buttons: ['bold', 'italic', 'underline', 'anchor', 'pre', 'h1', 'h2', 'orderedlist', 'unorderedlist', 'quote', 'image']
+      # Set up the medium editor with image upload
+      editor = new BlogEditor $editable[0],
+        buttonLabels: 'fontawesome'
+        extensions:
+          placeholder:
+            text: ''
+        toolbar:
+          buttons: ['bold', 'italic', 'underline', 'anchor', 'pre', 'h1', 'h2', 'orderedlist', 'unorderedlist', 'quote', 'image']
 
-    # Disable medium toolbar if we are in a code block
-    editor.subscribe 'showToolbar', (e) =>
-      if @inPreformatted()
-        editor.toolbar.hideToolbar()
+      # Disable medium toolbar if we are in a code block
+      editor.subscribe 'showToolbar', (e) =>
+        if @inPreformatted()
+          editor.toolbar.hideToolbar()
 
-    # Enable medium-editor-insert-plugin for images
-    tpl.$('.editable').mediumInsert
-      editor: editor
-      enabled: true
-      addons:
-        images:
-          fileUploadOptions:
-            submit: (e, data) ->
-              self = tpl.$('.editable').data('plugin_mediumInsertImages')
-              files = data.files
-              # Use CollectionFS + Amazon S3
-              if Meteor.settings?.public?.blog?.useS3
-                for file in files
-                  Blog.S3Files.insert file, (err, fileObj) ->
-                    Tracker.autorun (c) ->
-                      theFile = Blog.S3Files.find({_id: fileObj._id}).fetch()[0]
-                      if theFile.isUploaded() and theFile.url?()
-                        # insert-plugin assumes a server response, but we are
-                        # cooler than that so pretend this came from a server
-                        self.uploadDone e,
-                          result:
-                            files: [ url: theFile.url() ]
-                          context: data.context
-                        c.stop()
-              # Use Local Filestore
-              else
-                for file in files
-                  Blog.FilesLocal.insert file, (err, fileObj) ->
-                    Tracker.autorun (c) ->
-                      theFile = Blog.FilesLocal.find({_id: fileObj._id}).fetch()[0]
-                      if theFile.isUploaded() and theFile.url?()
-                        # insert-plugin assumes a server response, but we are
-                        # cooler than that so pretend this came from a server
-                        self.uploadDone e,
-                          result:
-                            files: [ url: theFile.url() ]
-                          context: data.context
-                        c.stop()
+      # Enable medium-editor-insert-plugin for images
+      tpl.$('.editable').mediumInsert
+        editor: editor
+        enabled: true
+        addons:
+          images:
+            fileUploadOptions:
+              submit: (e, data) ->
+                self = tpl.$('.editable').data('plugin_mediumInsertImages')
+                files = data.files
+                # Use CollectionFS + Amazon S3
+                if Meteor.settings?.public?.blog?.useS3
+                  for file in files
+                    Blog.S3Files.insert file, (err, fileObj) ->
+                      Tracker.autorun (c) ->
+                        theFile = Blog.S3Files.find({_id: fileObj._id}).fetch()[0]
+                        if theFile.isUploaded() and theFile.url?()
+                          # insert-plugin assumes a server response, but we are
+                          # cooler than that so pretend this came from a server
+                          self.uploadDone e,
+                            result:
+                              files: [ url: theFile.url() ]
+                            context: data.context
+                          c.stop()
+                # Use Local Filestore
+                else
+                  for file in files
+                    Blog.FilesLocal.insert file, (err, fileObj) ->
+                      Tracker.autorun (c) ->
+                        theFile = Blog.FilesLocal.find({_id: fileObj._id}).fetch()[0]
+                        if theFile.isUploaded() and theFile.url?()
+                          # insert-plugin assumes a server response, but we are
+                          # cooler than that so pretend this came from a server
+                          self.uploadDone e,
+                            result:
+                              files: [ url: theFile.url() ]
+                            context: data.context
+                          c.stop()
 
-        #embeds: {}
+          #embeds: {}
 
 
-    $editable.data 'mediumEditor', editor
-    editor
+      $editable.data 'mediumEditor', editor
+      editors.push editor
+
+    editors
 
   # INSTANCE METHODS
 
