@@ -229,8 +229,9 @@ Template.blogAdminEdit.events
     for index in [0..editables.length-1]
       $editable = $(editables[index])
       $html = $(htmls[index])
+      editor = editors[index]
 
-      $html.val editors[index].pretty()
+      $html.val editor.pretty()
       $html.height($editable.height())
 
     setEditMode tpl, 'html'

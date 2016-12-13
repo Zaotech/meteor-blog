@@ -26,7 +26,7 @@ class @BlogEditor extends MediumEditor
           editor.toolbar.hideToolbar()
 
       # Enable medium-editor-insert-plugin for images
-      tpl.$('.editable').mediumInsert
+      $editable.mediumInsert
         editor: editor
         enabled: true
         addons:
