@@ -249,17 +249,18 @@ Template.blogAdminEdit.events
 
   # Autosave
   'input .editable, keydown .editable, keydown .html-editor': _.debounce (e, tpl) ->
-    save tpl, (id, err) ->
-      if err
-        return toastr.error err.message
+    if Blog.settings.autosave
+      save tpl, (id, err) ->
+        if err
+          return toastr.error err.message
 
-      if id
-        # If new blog post, subscribe to the new post and update URL
-        tpl.id.set id
-        path = Blog.Router.pathFor 'blogAdminEdit', id: id
-        Blog.Router.replaceState path
+        if id
+          # If new blog post, subscribe to the new post and update URL
+          tpl.id.set id
+          path = Blog.Router.pathFor 'blogAdminEdit', id: id
+          Blog.Router.replaceState path
 
-      toastr.success Blog.settings.language.saved
+        toastr.success Blog.settings.language.saved
   , 8000
 
   'blur [name=title]': (e, tpl) ->

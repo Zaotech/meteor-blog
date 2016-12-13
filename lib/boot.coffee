@@ -39,6 +39,7 @@ if Meteor.isServer
 
 if Meteor.isClient
   Blog.config
+    autosave: true
     title: ''
     blogIndexTemplate: null
     blogShowTemplate: null
