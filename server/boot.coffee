@@ -16,6 +16,7 @@ Meteor.startup ->
     arr = Blog.Post.where({ excerpt: { $exists: 0 }})
     i = 0
     while i < arr.length
+      console.log "Startup"
       obj = arr[i++]
       excerpts = {}
       for language in getSupportedLanguages()

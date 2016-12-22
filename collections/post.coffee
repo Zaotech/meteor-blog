@@ -4,12 +4,16 @@ class Blog.Post extends Minimongoid
 
   @after_save: (post) ->
     post.tags = Blog.Post.splitTags post.tags
-    post.excerpt = Blog.Post.excerpt post.body if post.body
+    updateData =
+      tags: post.tags
+    
+    # Only re-generate the excerpt if the body exists
+    if post.body
+      post.excerpt = Blog.Post.excerpt post.body
+      updateData.excerpt = post.excerpt
 
     @_collection.update _id: post.id,
-      $set:
-        tags: post.tags
-        excerpt: post.excerpt
+      $set: updateData
 
   @replace_foreign_charts:  (str) ->
     charts =
@@ -125,6 +129,8 @@ class Blog.Post extends Minimongoid
         
         excerptObject[langCode] = ret
 
+    console.log "Created excerpt:"
+    console.log excerptObject
     excerptObject
 
   author: ->
