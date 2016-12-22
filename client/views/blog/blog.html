@@ -11,36 +11,26 @@
 
 <template name="blogIndexLoop">
   {{#each posts}}
-    <div class="meteor-blog-post hot-posts">
-      <article>
+    <div class="meteor-blog-post">
       {{#if featuredImage}}
-        <figure class="post-image">
+        <div class="meteor-blog-post-thumbnail">
           <a href="{{blogPathFor 'blogShow'}}">
             <img src="{{featuredImage}}" alt="{{title}}">
           </a>
-        </figure>
+        </div>
       {{/if}}
-                <div class="post-meta">
-                    <div class="post-title">
-                        <h3><a href="{{blogPathFor 'blogShow'}}">{{title}}</a></h3>
-                    </div>
-                    <div class="stats">
-                        <div class="stats-block">
-                            <span class="fa fa-eye icon"></span>
-                            642
-                        </div>
-                        <div class="stats-block">
-                            <span class="fa fa-bookmark icon"></span>
-                            283
-                        </div>
-                        <div class="stats-block">
-                            <span class="fa fa-commenting icon"></span>
-                            102
-                        </div>
-                    </div>
-                </div>
-
-    </article>
+      <div class="meteor-blog-post-excerpt">
+        <h2>
+          <a href="{{blogPathFor 'blogShow'}}">{{title}}</a>
+        </h2>
+        <div class="meteor-blog-post-meta">
+          {{ BlogLanguage.metaAuthorBy }} {{authorName}} {{ BlogLanguage.metaAuthorOn }} {{blogFormatDate publishedAt}}
+          {{> blogTags }}
+        </div>
+        <div class="meteor-blog-post-excerpt">
+          <small>{{{excerpt}}}</small>
+        </div>
+      </div>
     </div>
   {{else}}
     {{ BlogLanguage.blogEmpty }}
