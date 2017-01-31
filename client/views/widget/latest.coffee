@@ -2,6 +2,7 @@ Template.blogLatest.onRendered () ->
   num = if @data?.num then @data.num else 3
   @autorun ->
     Meteor.subscribe 'blog.posts', num
+    Meteor.subscribe 'blog.authors'
 
 
 Template.blogLatest.helpers
