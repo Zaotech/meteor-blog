@@ -129,8 +129,6 @@ class Blog.Post extends Minimongoid
         
         excerptObject[langCode] = ret
 
-    console.log "Created excerpt:"
-    console.log excerptObject
     excerptObject
 
   author: ->

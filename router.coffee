@@ -81,6 +81,18 @@ Blog.Router =
   routeAll: (routes) ->
     @routes = routes
 
+    basePath =
+      # Avoid double-slashes like '//tag/:tag' when basePath is '/'...
+      if Blog.settings.basePath is '/'
+        ''
+      else
+        Blog.settings.basePath
+    adminBasePath =
+      if Blog.settings.adminBasePath is '/'
+        ''
+      else
+        Blog.settings.adminBasePath
+
     # --------------------------------------------------------------------------
     # IRON ROUTER
 
@@ -119,6 +131,18 @@ Blog.Router =
             @next()
         action: ->
           @next()
+        subscriptions: ->
+          # Wait for the necessary subscriptions for individual blog post page.
+          location = '/' + @params[0]
+          isBasePath = location.slice(0, basePath.length) == basePath
+          if isBasePath
+            slug = location.slice(basePath.length+1, location.length)
+            if slug
+              [
+                @subscribe 'blog.singlePostBySlug', slug
+                @subscribe 'blog.commentsBySlug', slug
+                @subscribe 'blog.authors'
+              ]
 
     # --------------------------------------------------------------------------
     # FLOW ROUTER
