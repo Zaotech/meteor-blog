@@ -140,8 +140,8 @@ Template.blogShowBody.helpers
   isAdmin: -> Session.get "blog.canEditPost"
   shareData: ->
     post = Blog.Post.first slug: @slug
-    title: post.title,
-    excerpt: post.excerpt,
+    title: getTranslatedString(post.title),
+    excerpt: getTranslatedString(post.excerpt),
     description: post.description,
     author: post.authorName(),
     thumbnail: post.thumbnail()
