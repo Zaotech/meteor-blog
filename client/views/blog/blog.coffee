@@ -39,7 +39,7 @@ Template.blogIndex.helpers
     if tag
       posts = Blog.Post.where({ tags: tag }, { sort: publishedAt: -1 })
     else
-      posts = Blog.Post.where({}, { sort: publishedAt: -1 })
+      posts = Blog.Post.where({ tags: {$ne: 'homepage'} }, { sort: publishedAt: -1 })
 
     translateBlogPosts(posts)
 
