@@ -81,11 +81,18 @@ save = (tpl, cb) ->
     else
       body = $('.html-editor', $form).val().trim()
 
-    if body?
-      langCode = $editable.data('lang')
-      bodyStringObject[langCode] = body
+    console.log 'body is', body
+    # If the body only contains whitespace and <br> tags, remove them.
+    bodyOnlyContainsWhitespace = /^<p[a-zA-Z\s="\d-]*>[(<br\/?>|\\n|\s)]*<\/p>$/gm.test body
+    body = '' if bodyOnlyContainsWhitespace or !body
 
+    console.log 'body contains only whitespace: ' + bodyOnlyContainsWhitespace
+
+    langCode = $editable.data('lang')
+    if body?
       bodyNotNull = true # At least one body exists
+
+    bodyStringObject[langCode] = body
 
   # If not at least one body exists, call the callback with an error.
   if not bodyNotNull
