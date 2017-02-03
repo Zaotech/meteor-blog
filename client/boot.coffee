@@ -100,11 +100,15 @@ Template.registerHelper "supportedLanguages", () ->
 # - Excerpt
 # - Title
 @translateBlogPost = (post) ->
-  if post and post.body? # Body isn't always present
-    post.body = getTranslatedString(post.body)
-
-  post.excerpt = getTranslatedString(post.excerpt)
-  post.title = getTranslatedString(post.title)
+  if post?
+    post.body = if post.body? then getTranslatedString(post.body) else ''
+    post.excerpt = if post.excerpt? then getTranslatedString(post.excerpt) else ''
+    post.title = if post.title? then getTranslatedString(post.title) else ''
+  else
+    post =
+      body: ''
+      excerpt: ''
+      title: ''
 
   post
 

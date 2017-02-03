@@ -41,6 +41,7 @@ if Meteor.isClient
   Blog.config
     autosave: true
     title: ''
+    description: ''
     blogIndexTemplate: null
     blogShowTemplate: null
     blogNotFoundTemplate: null

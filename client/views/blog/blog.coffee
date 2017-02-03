@@ -27,10 +27,12 @@ Template.blogIndex.onCreated ->
       @blogReady.set true
 
 Template.blogIndex.onRendered ->
+  ###
   # Page Title
   document.title = "Blog"
   if Blog.settings.title
     document.title += " | #{Blog.settings.title}"
+  ###
 
 Template.blogIndex.helpers
   blogReady: -> Template.instance().blogReady.get()
@@ -108,10 +110,12 @@ Template.blogShowBody.onRendered ->
     if authorized
       Session.set 'blog.canEditPost', authorized
 
+  ###
   # Page Title
   document.title = "#{@data.title}"
   if Blog.settings.title
     document.title += " | #{Blog.settings.title}"
+  ###
 
   # Hide draft/private posts from crawlers
   if @data.mode isnt 'public'
