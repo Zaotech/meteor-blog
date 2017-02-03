@@ -283,12 +283,18 @@ Meteor.startup ->
   routes.push
     path: adminBasePath
     name: 'blogAdmin'
+    seo:
+      title: Blog.settings.title + ' Admin'
+    subscriptions: ->
 
   # NEW/EDIT BLOG
 
   routes.push
     path: adminBasePath + '/edit/:id'
     name: 'blogAdminEdit'
+    seo:
+      title: 'Edit Post'
+    subscriptions: ->
 
 
   # ----------------------------------------------------------------------------

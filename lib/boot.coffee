@@ -113,6 +113,7 @@ if Meteor.isClient
 Blog.config
   basePath: '/blog'
   adminBasePath: '/admin/blog'
+  afterBlogSave: null # Function to run after a blog is saved (optional).
 
 
 # Return an array with the code and full name of the supported languages.

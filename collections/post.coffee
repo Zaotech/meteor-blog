@@ -15,6 +15,9 @@ class Blog.Post extends Minimongoid
     @_collection.update _id: post.id,
       $set: updateData
 
+    if Blog.settings.afterBlogSave
+      Blog.settings.afterBlogSave post
+
   @replace_foreign_charts:  (str) ->
     charts =
       'ä|æ|ǽ': 'ae',
