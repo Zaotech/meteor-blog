@@ -82,7 +82,7 @@ save = (tpl, cb) ->
       body = $('.html-editor', $form).val().trim()
 
     # If the body only contains whitespace and <br> tags, remove them.
-    bodyOnlyContainsWhitespace = /^<p[a-zA-Z\s="\d-]*>[(<br\/?>|\\n|\s)]*<\/p>$/gm.test body
+    bodyOnlyContainsWhitespace = /^<p[a-zA-Z\s="\d-]*>[(<br\/?>|\\n|\s)]*<\/p>$/.test body
     body = '' if bodyOnlyContainsWhitespace or !body
 
     langCode = $editable.data('lang')
