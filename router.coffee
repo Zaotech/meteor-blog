@@ -265,6 +265,8 @@ Meteor.startup ->
         slug = Blog.Router.getParam 'slug'
         post = Blog.Post.first slug: slug
         getTranslatedString(post.title) if post and post.title
+      twitter:
+        card: 'summary_large_image'
     subscriptions: ->
       slug = Blog.Router.getParam 'slug'
       [
