@@ -140,6 +140,7 @@ Blog.Router =
               @next()
           action: ->
             @next()
+          name: route.name
           seo: route.seo
           subscriptions: ->
             # Wait for the necessary subscriptions for individual blog post page.

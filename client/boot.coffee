@@ -61,13 +61,16 @@ Template.registerHelper "blogPager", ->
     return new Spacebars.SafeString '<a class="blog-load-more btn" href="#">' + loadMore + '</a>'
 
 Template.registerHelper 'blogPathFor', (name, options) ->
+  if Blog.settings.i18n.localizedURLs and Blog.settings.i18n.getCurrentLanguage
+    return '/' + Blog.settings.i18n.getCurrentLanguage() + Blog.Router.pathFor name, @, options
+
   return Blog.Router.pathFor name, @, options
 
 Template.registerHelper "getTranslatedString", (stringObject) ->
-  string = getTranslatedString(stringObject)
+  getTranslatedString(stringObject)
 
 Template.registerHelper "getTranslatedStringForLanguage", (stringObject, langCode) ->
-  string = getTranslatedString(stringObject, langCode)
+  getTranslatedString(stringObject, langCode)
 
 Template.registerHelper "supportedLanguages", () ->
   getSupportedLanguages()
@@ -87,12 +90,23 @@ Template.registerHelper "supportedLanguages", () ->
   stringObj
 
 # Get the correct string translation from an object with all the translations.
-# - Default to English if not requesting specific translation and the translation is not available.
+# If a string object exists, this function will try to load the string in the following order:
+#   1. If a specific language is requested, try to load it.
+#   2. If no specific language is requested, load the current language. If that fails, load the default language.
+# If the above fails, it will return an empty string.
 @getTranslatedString = (stringObject, langCode) ->
-  if langCode?
-    string = stringObject[langCode]
-  else
-    string = stringObject[TAPi18n.getLanguage()] or stringObject["en"]
+  if stringObject
+    if langCode
+      string = stringObject[langCode]
+    else
+      if Blog.settings.i18n.getCurrentLanguage
+        string = stringObject[Blog.settings.i18n.getCurrentLanguage()]
+
+      if !string
+        string = stringObject[Blog.settings.i18n.defaultLanguage]
+    
+  
+  string or ''
 
 # Return the blog post but replace the translation string objects with the correct translated string for use by templates.
 # Blog post properties that support translations:
@@ -101,9 +115,9 @@ Template.registerHelper "supportedLanguages", () ->
 # - Title
 @translateBlogPost = (post) ->
   if post?
-    post.body = if post.body? then getTranslatedString(post.body) else ''
-    post.excerpt = if post.excerpt? then getTranslatedString(post.excerpt) else ''
-    post.title = if post.title? then getTranslatedString(post.title) else ''
+    post.body = getTranslatedString(post.body)
+    post.excerpt = getTranslatedString(post.excerpt)
+    post.title = getTranslatedString(post.title)
   else
     post =
       body: ''

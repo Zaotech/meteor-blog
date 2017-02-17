@@ -5,10 +5,11 @@ Blog.settings =
   comments: {}
   rss: {}
   language: {}
+  i18n: {}
 
 Blog.config = (appConfig) ->
   # No deep extend in underscore :-(
-  for key in ['shareit', 'comments', 'rss', 'language']
+  for key in ['shareit', 'comments', 'rss', 'language', 'i18n']
     if appConfig[key]
       @settings[key] = _.extend(@settings[key], appConfig[key])
       delete appConfig[key]
@@ -54,6 +55,19 @@ if Meteor.isClient
     syntaxHighlightingTheme: 'github'
     cdnFontAwesome: true
     dateFormat: 'MMM Do, YYYY'
+    i18n:
+      defaultLanguage: 'en'
+      # Should return the short name for the current language.
+      getCurrentLanguage: () ->
+        'en'
+      # Should return an object of language objects.
+      ## The keys should be the short name of the language.
+      ## The values should be objects which contain the English and localized versions of the language name.
+      getSupportedLanguages: () ->
+        en:
+          en: 'English'
+          name: 'English'
+      localizedURLs: false
     shareit:
       siteOrder: ['facebook', 'twitter']
     comments:
@@ -118,7 +132,7 @@ Blog.config
 
 # Return an array with the code and full name of the supported languages.
 @getSupportedLanguages = () ->
-  languages = TAPi18n.getLanguages()
+  languages = Blog.settings.i18n.getSupportedLanguages()
   supportedLanguages = []
   for langCode, lang of languages
     supportedLanguages.push { code: langCode, name: lang.name }
