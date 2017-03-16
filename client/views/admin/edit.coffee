@@ -182,9 +182,11 @@ Template.blogAdminEdit.onRendered ->
 
         # Tags
         $tags = @$('[data-role=tagsinput]')
-        $tags.tagsinput confirmKeys: [13, 44, 9]
+        $tags.tagsinput
+          confirmKeys: [13, 44, 9]
+          trimValue: true
         $tags.tagsinput('input').typeahead(
-          highlight: true,
+          highlight: true
           hint: false
         ,
           name: 'tags'
