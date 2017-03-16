@@ -184,17 +184,25 @@ Template.blogAdminEdit.onRendered ->
         $tags = @$('[data-role=tagsinput]')
         $tags.tagsinput
           confirmKeys: [13, 44, 9]
+          onTagExists: (item, tag) ->
+            # Tag already exists
+            # Keep default behavior for tag to hide and fade in,
+            # but also clear the typeahead input.
+            tag.hide().fadeIn()
+            $tags.tagsinput('input').typeahead 'val', ''
           trimValue: true
+        $tags.on 'itemAdded', (e) ->
+          # Clear input after tag is added.
+          $(this).typeahead 'val', ''
         $tags.tagsinput('input').typeahead(
           highlight: true
           hint: false
         ,
           name: 'tags'
-          displayKey: 'val'
+          display: 'val'
           source: substringMatcher Blog.Tag.first().tags
         ).bind 'typeahead:selected', (obj, datum) ->
           $tags.tagsinput 'add', datum.val
-          $tags.tagsinput('input').typeahead 'val', ''
 
         # Create the Medium editor
         BlogEditor.make @
