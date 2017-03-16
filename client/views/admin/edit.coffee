@@ -6,7 +6,10 @@ getBlogTags = (tags) ->
   if typeof tags is 'string'
     []
   else
-    tags
+    # Remove empty tags
+    cleanTags = tags.filter (tag) ->
+      tag != ''
+    cleanTags
 
 
 # Reads image dimensions and takes a callback callback passes params (width,
